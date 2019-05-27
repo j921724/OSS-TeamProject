@@ -38,7 +38,7 @@ int string_f(char data[]);
 
 int main(){
     
-    FILE *fp=fopen("example2.json", "r");
+    FILE *fp=fopen("example.json", "r");
     int fileLength;
     fseek(fp,0,SEEK_END);
     fileLength=ftell(fp);
@@ -67,14 +67,24 @@ int main(){
     
     
     printf("%d\n",length);
-    
-    for( int i = 0; i < 30; i++){
+    int i = 0;
+    while(token[i].type){
         printf("[%d] ",i);
-        for(int k = token[i].start ; k<token[i].end; k++){
+        int k = token[i].start ;
+        for(k; k<token[i].end; k++){
             printf("%c", data[k]);
         }
         printf(" (size: %d ",token[i].size);
-        printf("  %d ~ %d )\n",token[i].start, token[i].end);
+        printf(", %d~%d , ",token[i].start, token[i].end);
+        switch (token[i].type) {
+            case 1 : printf("OBJECT"); break;
+            case 2 : printf("ARRAY"); break;
+            case 3 : printf("STRING"); break;
+            case 4 : printf("PRIMATIVE"); break;
+            default : printf("UNDEFINED"); break;
+        }
+        printf(" )\n");
+        i++;
     }
     
     printf("\n");
@@ -110,7 +120,7 @@ int object_f(char data[], int count){
     
     token[tok_index].start = j;
     token[tok_index].size = s;
-    
+    token[tok_index].type = OBJECT;
     j++;
     tok_index++;
     while(data[j]!='}'){
@@ -157,6 +167,7 @@ int array_f(char data[]){
     token[tok_index].start=j;
     token[tok_index].size = s;
     
+    token[tok_index].type = ARRAY;
     
     j++;
     tok_index++;
@@ -190,6 +201,7 @@ int string_f(char data[]){
      
      return;
      */
+    token[tok_index].type = STRING;
     token[tok_index].start = j+1;
     j++;
     while(data[j]!='"'){
